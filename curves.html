@@ -1,0 +1,87 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru">
+	<head>
+		<title>Curves Calc</title>
+		<meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
+		<style type="text/css">
+			body {margin:0;}
+		</style>
+		<script type="text/javascript" src="raphael.js"></script>
+		<script type="text/javascript">
+			window.onload = function() {
+				var paper = Raphael("drawing-area", 600, 600);
+				var paper2 = Raphael("drawing-area2", 600, 600);
+				var drawing = false;
+				var points, pointset;
+				
+				document.body.onmousedown = function(e) {
+					drawing = true;
+					
+					pointset = paper.set();
+					points = [];
+					points.push([e.clientX, e.clientY]);
+					pointset.attr({"fill": "#00f", "stroke": "none"});
+				};
+				
+				document.body.onmousemove = function(e) {
+					if (!drawing) return;
+					
+					pointset.push(paper.circle(e.clientX, e.clientY, 1));
+					points.push([e.clientX, e.clientY]);
+					pointset.attr({"fill": "#00f", "stroke": "none"});
+				};
+				
+				document.body.onmouseup = function(e) {
+					drawing = false;
+					
+					pointset.remove();
+					
+					var path = "M" + points[0][0] + " " + points[0][1];
+					var opt = [];
+					var angles = [];
+					
+					for (var i = 1; i < points.length; i++) {
+						var p = points[i];
+						var pp = points[i - 1];
+						var np = points[i + 1];
+						var a = Math.atan2(p[0] - pp[0], p[1] - pp[1]) * 180 / Math.PI; // angle with prev
+						var an = np ? Math.atan2(np[0] - p[0], np[1] - p[1]) * 180 / Math.PI : null; // angle with next
+						var av = np ? an - a : null; // angle variation
+						
+						if (av !== null && Math.abs(av) < 3) continue;
+						
+						angles.push(av);
+						
+						opt.push([p[0], p[1], pp[0], pp[1], p[0], p[1]]);
+					}
+					
+					console.log(angles);
+
+					for (var i = 0; i < opt.length; i++) {
+						var p = opt[i];
+						path += "C" + [p[0], p[1], p[2], p[3], p[4], p[5]].join(" ");
+						paper.circle(p[0], p[1], 3).attr({"fill": "blue"});
+					}
+
+					paper.path(path).attr({"stroke-width": 3});
+					
+					path = "M" + points[0][0] + " " + points[0][1];
+
+					for (var i = 1; i < points.length; i++) {
+						var p = points[i];
+						path += "L" + [p[0], p[1]].join(" ");
+						paper2.circle(p[0], p[1], 3).attr({"fill": "blue"});
+					}
+					
+					paper2.path(path).attr({"stroke-width": 3});
+					
+					console.log([points.length - 1, opt.length]);
+				};
+			};
+		</script>
+	</head>
+	<body>
+		<div id="drawing-area" style="float:left"></div>
+		<div id="drawing-area2" style="float:left"></div>
+	</body>
+</html>
