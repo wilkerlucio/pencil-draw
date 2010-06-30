@@ -6,13 +6,16 @@
 		<style type="text/css">
 			body {margin:0;}
 		</style>
-		<script type="text/javascript" src="raphael.js"></script>
+		<script type="text/javascript" src="/javascripts/raphael.js"></script>
 		<script type="text/javascript">
 			window.onload = function() {
 				var paper = Raphael("drawing-area", 600, 600);
 				var paper2 = Raphael("drawing-area2", 600, 600);
 				var drawing = false;
 				var points, pointset;
+				
+				paper.rect(0, 0, 600, 600).attr({fill: "#060"});
+				paper2.rect(0, 0, 600, 600).attr({fill: "#600"});
 				
 				document.body.onmousedown = function(e) {
 					drawing = true;

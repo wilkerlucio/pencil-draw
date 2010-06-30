@@ -1,0 +1,66 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru">
+	<head>
+		<title>Circle Line Collision</title>
+		<meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
+		<style type="text/css">
+			body {margin:0;}
+		</style>
+		<script type="text/javascript" src="/javascripts/raphael.js"></script>
+		<script type="text/javascript">
+			isLineCollidingCircle = function(line, circle) {
+				var ax = line[0],
+						ay = line[1],
+						bx = line[2],
+						by = line[3],
+						cx = circle[0],
+						cy = circle[1],
+						cr = circle[2];
+				
+				var dx = bx - ax;
+				var dy = by - ay;
+				
+				var lab = Math.sqrt(dx * dx + dy * dy);
+				
+				dx = dx / lab;
+				dy = dy / lab;
+				
+				var t = dx * (cx - ax) + dy * (cy - ay);
+				if (t < 0) t = 0;
+				if (t > lab) t = lab;
+				
+				var ex = t * dx + ax;
+				var ey = t * dy + ay;
+				
+				var edx = ex - cx;
+				var edy = ey - cy;
+				
+				var lec = Math.sqrt(edx * edx + edy * edy);
+				
+				return lec <= cr;
+			};
+		
+			window.onload = function() {
+				var paper = Raphael("drawing-area", 600, 600);
+				var drawing = false;
+				
+				paper.rect(0, 0, 600, 600).attr({fill: "#060"});
+				
+				var line = [100, 400, 400, 200];
+				paper.path("M" + line[0] + " " + line[1] + "L" + line[2] + " " + line[3]);
+				var circle = [200, 200, 50];
+				var circle_draw = paper.circle(200, 200, 50).attr({"fill": "#000", "stroke": "none"});
+				
+				document.body.onmousemove = function(e) {
+					circle = [e.clientX, e.clientY, 50];
+					circle_draw.attr({cx: e.clientX, cy: e.clientY});
+					
+					circle_draw.attr({fill: (isLineCollidingCircle(line, circle) ? "#f00" : "#000")});
+				};
+			};
+		</script>
+	</head>
+	<body>
+		<div id="drawing-area" style="float:left"></div>
+	</body>
+</html>
