@@ -44,7 +44,7 @@
 					
 					pointset.remove();
 					
-					var opt = curvedSimplifiedPath(points, 10);
+					var opt = curvedSimplifiedPath(points, 5);
 					var path = "M" + points[0].join(' ');
 					paper3.rect(points[0][0]-3, points[0][1]-3, 5, 5).attr({"fill": "white"});
 					
