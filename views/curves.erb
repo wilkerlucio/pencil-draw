@@ -48,25 +48,34 @@
 					var path = "M" + points[0].join(' ');
 					paper3.circle(points[0][0], points[0][1], 3).attr({"fill": "blue"});
 					
-					for (var i = 0; i < opt.length; i++) {
+					var p3_path = paper3.path().attr({"stroke-width": 3, "stroke-linejoin": "round"});
+					
+					for (var i = 1; i < opt.length; i++) {
 						var p = opt[i];
+						var pre = opt[i - 1];
 						path += "C" + p.join(" ");
-						paper3.circle(p[4], p[5], 3).attr({"fill": "blue"});
+						paper3.path("M" + (pre[4] || pre[0]) + " " + (pre[5] || pre[1]) + "L" + p[0] + " " + p[1]).attr({"stroke":"cyan"});
+						paper3.circle(p[0], p[1], 2).attr({"fill": "cyan", "stroke": "none"});
+						paper3.path("M" + p[4] + " " + p[5] + "L" + p[2] + " " + p[3]).attr({"stroke":"cyan"});
+						paper3.circle(p[2], p[3], 2).attr({"fill": "cyan", "stroke": "none"});
+						paper3.rect(p[4] - 3, p[5] - 3, 5, 5).attr({"fill": "white"});
 					}
 					
 					paper.path(path).attr({"stroke-width": 3, "stroke-linejoin": "round"});
-					paper3.path(path).attr({"stroke-width": 3, "stroke-linejoin": "round"});
+					p3_path.attr({path: path});
 					
 					path = "M" + points[0][0] + " " + points[0][1];
 					paper2.circle(points[0][0], points[0][1], 3).attr({"fill": "blue"});
-
+					
+					var p2_path = paper2.path().attr({"stroke-width": 3});
+					
 					for (var i = 1; i < points.length; i++) {
 						var p = points[i];
 						path += "L" + [p[0], p[1]].join(" ");
-						paper2.circle(p[0], p[1], 3).attr({"fill": "blue"});
+						paper2.rect(p[0] - 3, p[1] -3 , 5, 5).attr({"fill": "white"});
 					}
 					
-					paper2.path(path).attr({"stroke-width": 3});
+					p2_path.attr({"path": path});
 					
 					console.log([points.length, opt.length]);
 				};

@@ -11,12 +11,19 @@
 		<script type="text/javascript">
 			window.onload = function() {
 				var paper = Raphael("drawing-area", 600, 600);
-				var drawing = false;
+				var simplified, current_path, path_info, marks;
 				
-				paper.rect(0, 0, 600, 600).attr({fill: "#060"});
+				reset = function() {
+					paper.clear();
+					paper.rect(0, 0, 600, 600).attr({fill: "#060"});
+					
+					simplified = false;
+					current_path = paper.path();
+					path_info = [];
+					marks = paper.set();
+				};
 				
-				var current_path = paper.path();
-				var path_info = [];
+				reset();
 				
 				draw_path = function(pi, curved) {
 					curved = curved || false;
@@ -30,17 +37,39 @@
 						
 						current_path.attr({path: p});
 					}
+					
+					if (curved) {
+						marks.remove();
+						
+						paper.rect((pi[0][0]) - 3, (pi[0][1]) - 3, 5, 5).attr({fill: "white"});
+						
+						for (var i = 1; i < pi.length; i++) {
+							var p = pi[i];
+							var pre = pi[i - 1];
+							
+							paper.path("M" + (pre[4] || pre[0]) + " " + (pre[5] || pre[1]) + "L" + p[0] + " " + p[1]).attr({"stroke":"cyan"});
+							paper.circle(p[0], p[1], 2).attr({"fill": "cyan", "stroke": "none"});
+							paper.path("M" + p[4] + " " + p[5] + "L" + p[2] + " " + p[3]).attr({"stroke":"cyan"});
+							paper.circle(p[2], p[3], 2).attr({"fill": "cyan", "stroke": "none"});
+							paper.rect(p[4] - 3, p[5] - 3, 5, 5).attr({fill: "white"});
+						}
+					}
 				};
 				
 				document.getElementById("drawing-area").onclick = function(e) {
-					circle = paper.circle(e.clientX, e.clientY, 3).attr({fill: "#006", stroke: "none"});
+					if (simplified) {
+						reset();
+					}
+					
+					marks.push(paper.rect(e.clientX - 3, e.clientY - 3, 5, 5).attr({fill: "white"}));
 					path_info.push([e.clientX, e.clientY]);
 					
 					draw_path(path_info);
 				};
 				
 				simplify = function() {
-					draw_path(simplifyPath(path_info, 10), true);
+					draw_path(curvedSimplifiedPath(path_info, 30), true);
+					simplified = true;
 				};
 			};
 		</script>
