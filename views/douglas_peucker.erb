@@ -18,15 +18,15 @@
 				var current_path = paper.path();
 				var path_info = [];
 				
-				draw_path = function(pi) {
+				draw_path = function(pi, curved) {
+					curved = curved || false;
+					
 					if(pi.length > 1) {
 						var p = "M" + pi[0].join(' ');
 						
 						for (var i = 1; i < pi.length; i++) {
-							p += "L" + pi[i].join(' ');
+							p += (curved ? "C" : "L") + pi[i].join(' ');
 						}
-						
-						console.log(p);
 						
 						current_path.attr({path: p});
 					}
@@ -40,7 +40,7 @@
 				};
 				
 				simplify = function() {
-					draw_path(simplifyPath(path_info, 10));
+					draw_path(simplifyPath(path_info, 10), true);
 				};
 			};
 		</script>
