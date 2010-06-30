@@ -12,13 +12,16 @@
 			window.onload = function() {
 				var paper = Raphael("drawing-area", 600, 600);
 				var simplified, current_path, path_info, marks;
+				var tolerance = 30;
 				
 				reset = function() {
 					paper.clear();
 					paper.rect(0, 0, 600, 600).attr({fill: "#060"});
 					
+					sample_circle = paper.circle(0, 0, tolerance).attr({fill: "none", stroke: "#000"});
+					
 					simplified = false;
-					current_path = paper.path();
+					current_path = paper.path().attr({"stroke-width": 4});
 					path_info = [];
 					marks = paper.set();
 				};
@@ -43,6 +46,8 @@
 						
 						paper.rect((pi[0][0]) - 3, (pi[0][1]) - 3, 5, 5).attr({fill: "white"});
 						
+						rects = paper.set();
+						
 						for (var i = 1; i < pi.length; i++) {
 							var p = pi[i];
 							var pre = pi[i - 1];
@@ -51,9 +56,15 @@
 							paper.circle(p[0], p[1], 2).attr({"fill": "cyan", "stroke": "none"});
 							paper.path("M" + p[4] + " " + p[5] + "L" + p[2] + " " + p[3]).attr({"stroke":"cyan"});
 							paper.circle(p[2], p[3], 2).attr({"fill": "cyan", "stroke": "none"});
-							paper.rect(p[4] - 3, p[5] - 3, 5, 5).attr({fill: "white"});
+							rects.push(paper.rect(p[4] - 3, p[5] - 3, 5, 5).attr({fill: "white"}));
 						}
+						
+						rects.toFront();
 					}
+				};
+				
+				document.getElementById("drawing-area").onmousemove = function(e) {
+					sample_circle.attr({cx: e.clientX, cy: e.clientY});
 				};
 				
 				document.getElementById("drawing-area").onclick = function(e) {
@@ -68,7 +79,7 @@
 				};
 				
 				simplify = function() {
-					draw_path(curvedSimplifiedPath(path_info, 30), true);
+					draw_path(curvedSimplifiedPath(path_info, tolerance), true);
 					simplified = true;
 				};
 			};
