@@ -14,6 +14,19 @@ Array.prototype.array_get_keys = function() {
 	return keys;
 };
 
+Array.prototype.filter_keys = function(keys) {
+	var new_array = [];
+	var key_map = [];
+	
+	for (var i = 0; i < keys.length; i++) {
+		var k = keys[i];
+		new_array.push(this[k]);
+		key_map.push(k);
+	}
+	
+	return [new_array, key_map];
+};
+
 linePointDistance = function(line, point) {
 	var ax = line[0],
 			ay = line[1],
@@ -85,6 +98,49 @@ simplifyPathKeys = function(path, tolerance, left_index, right_index) {
 	return s;
 };
 
+simplifyPathKeys2 = function(path, tolerance) {
+	if (path.length < 3) return path.array_get_keys();
+	
+	var s = [0];
+	var l = 0;
+	var r = path.length - 1;
+	var x = r, j, line, valid_line, pd;
+	
+	while (l < r) {
+		while (x > l) {
+			line = [path[l][0], path[l][1], path[x][0], path[x][1]];
+			valid_line = true;
+
+			for (j = x - 1; j > l; j--) {
+				pd = linePointDistance(line, path[j]);
+
+				if (pd > tolerance) {
+					valid_line = false;
+					break;
+				}
+			}
+
+			if (valid_line) {
+				s.push(x);
+				
+				l = x;
+				x = r;
+			} else {
+				x--;
+			}	
+
+			if ((x - l) == 1) {
+				s.push(x);
+				l = x;
+				x = r;
+				break;
+			}
+		}
+	}
+	
+	return s;
+};
+
 simplifyPath = function(path, tolerance) {
 	var keys = simplifyPathKeys(path, tolerance);
 	var s = [];
@@ -97,7 +153,7 @@ simplifyPath = function(path, tolerance) {
 };
 
 curvedSimplifiedPath = function(path, tolerance) {
-	var keys = simplifyPathKeys(path, tolerance);
+	var keys = simplifyPathKeys2(path, tolerance);
 	var s = [];
 	s.push(path[0]);
 	
