@@ -27,6 +27,13 @@ Array.prototype.filter_keys = function(keys) {
 	return [new_array, key_map];
 };
 
+Math.lineSize = function(p1, p2) {
+	var dx = p2[0] - p1[0];
+			dy = p2[1] - p1[1];
+	
+	return Math.sqrt(dx * dx + dy * dy);
+};
+
 linePointDistance = function(line, point) {
 	var ax = line[0],
 			ay = line[1],
@@ -157,7 +164,7 @@ curvedSimplifiedPath = function(path, tolerance) {
 	var s = [];
 	s.push(path[0]);
 	
-	var c, p, d, pd;
+	var c, p, d, pd, a, l, dx, dy, lab, lab2;
 
 	for (var i = 1; i < keys.length; i++) {
 		c = keys[i];
@@ -172,6 +179,22 @@ curvedSimplifiedPath = function(path, tolerance) {
 		} else { // lets make the curve
 			c1 = path[Math.ceil(d * 0.25) + p];
 			c2 = path[Math.floor(d * 0.75) + p];
+			
+			if (i > 1) {
+				l = s[s.length - 1];
+				
+				dx = l[4] - l[2];
+				dy = l[5] - l[3];
+				
+				lab = Math.sqrt(dx * dx + dy * dy);
+				lab2 = Math.lineSize(c1, [l[4], l[5]]);
+				
+				dx = dx / lab;
+				dy = dy / lab;
+				
+				c1[0] = Math.round(l[4] + lab2 * dx);
+				c1[1] = Math.round(l[5] + lab2 * dy);
+			}
 			
 			s.push([c1[0], c1[1], c2[0], c2[1], cp[0], cp[1]]);
 		}
