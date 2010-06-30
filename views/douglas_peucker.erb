@@ -1,0 +1,52 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru">
+	<head>
+		<title>Douglas Peucker - Path Simplification</title>
+		<meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
+		<style type="text/css">
+			body {margin:0;}
+		</style>
+		<script type="text/javascript" src="/javascripts/raphael.js"></script>
+		<script type="text/javascript" src="/javascripts/path.js"></script>
+		<script type="text/javascript">
+			window.onload = function() {
+				var paper = Raphael("drawing-area", 600, 600);
+				var drawing = false;
+				
+				paper.rect(0, 0, 600, 600).attr({fill: "#060"});
+				
+				var current_path = paper.path();
+				var path_info = [];
+				
+				draw_path = function(pi) {
+					if(pi.length > 1) {
+						var p = "M" + pi[0].join(' ');
+						
+						for (var i = 1; i < pi.length; i++) {
+							p += "L" + pi[i].join(' ');
+						}
+						
+						console.log(p);
+						
+						current_path.attr({path: p});
+					}
+				};
+				
+				document.getElementById("drawing-area").onclick = function(e) {
+					circle = paper.circle(e.clientX, e.clientY, 3).attr({fill: "#006", stroke: "none"});
+					path_info.push([e.clientX, e.clientY]);
+					
+					draw_path(path_info);
+				};
+				
+				simplify = function() {
+					draw_path(simplifyPath(path_info, 10));
+				};
+			};
+		</script>
+	</head>
+	<body>
+		<div id="drawing-area" style="float:left"></div>
+		Click in green area to define points, them click <a href='#' onclick="simplify()">here</a> to simplify path.
+	</body>
+</html>
