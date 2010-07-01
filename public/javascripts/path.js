@@ -183,8 +183,6 @@ curvedSimplifiedPath = function(path, tolerance) {
 			if (i > 1) {
 				l = s.pop();
 				
-				console.log(l);
-				
 				dxa = l[2] - l[4];
 				dya = l[3] - l[5];
 				
@@ -216,8 +214,6 @@ curvedSimplifiedPath = function(path, tolerance) {
 						c1[1] = Math.round(l[5] + lsb * Math.sin(tb + bm));
 					}
 				}
-				
-				console.log(l);
 				
 				s.push(l);
 			}
