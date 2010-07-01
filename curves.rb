@@ -13,3 +13,7 @@ end
 get '/dp' do
   erb :douglas_peucker
 end
+
+get '/angles' do
+  erb :angles
+end
