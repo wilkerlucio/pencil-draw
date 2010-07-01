@@ -159,9 +159,10 @@ simplifyPath = function(path, tolerance) {
 	return s;
 };
 
-curvedSimplifiedPath = function(path, tolerance) {
+curvedSimplifiedPath = function(path, tolerance, smooth_tolerance) {
 	var keys = simplifyPathKeys2(path, tolerance);
 	var s = [];
+	smooth_tolerance = smooth_tolerance || 1.9;
 	s.push(path[0]);
 	
 	var c, p, d, pd, a, l, dxa, dya, dxb, dyb, lsa, lsb, ta, tb, ad, bm;
@@ -199,7 +200,7 @@ curvedSimplifiedPath = function(path, tolerance) {
 				if (ad < 0) ad += 2 * Math.PI;
 				if (ad > Math.PI) ad -= 2 * Math.PI;
 				
-				if (Math.abs(ad) > (Math.PI / 2)) {
+				if (Math.abs(ad) > smooth_tolerance) {
 					bm = (Math.PI - Math.abs(ad)) / 2;
 					
 					if (ad < 0) {
