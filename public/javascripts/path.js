@@ -27,9 +27,16 @@ Array.prototype.filter_keys = function(keys) {
 	return [new_array, key_map];
 };
 
-Math.lineSize = function(p1, p2) {
+Math.pointDistance = function(p1, p2) {
 	var dx = p2[0] - p1[0];
 			dy = p2[1] - p1[1];
+
+	return Math.sqrt(dx * dx + dy * dy);
+};
+
+Math.lineSize = function(line) {
+	var dx = line[2] - line[0];
+			dy = line[3] - line[1];
 	
 	return Math.sqrt(dx * dx + dy * dy);
 };
@@ -74,22 +81,29 @@ isLineCollidingCircle = function(line, circle) {
 simplifyPathKeys = function(path, tolerance) {
 	if (path.length < 3) return path.array_get_keys();
 	
+	var t2 = tolerance * 3;
 	var s = [0];
 	var l = 0;
 	var r = path.length - 1;
-	var x = r, j, line, valid_line, pd;
+	var x = r, j, line, line_size, valid_line, pd;
 	
 	while (l < r) {
 		while (x > l) {
 			line = [path[l][0], path[l][1], path[x][0], path[x][1]];
+			line_size = Math.lineSize(line);
+			
 			valid_line = true;
+			
+			if (line_size <= t2) {
+				x = l + 1;
+			} else {
+				for (j = x - 1; j > l; j--) {
+					pd = linePointDistance(line, path[j]);
 
-			for (j = x - 1; j > l; j--) {
-				pd = linePointDistance(line, path[j]);
-
-				if (pd > tolerance) {
-					valid_line = false;
-					break;
+					if (pd > tolerance) {
+						valid_line = false;
+						break;
+					}
 				}
 			}
 
@@ -159,8 +173,8 @@ curvedSimplifiedPath = function(path, tolerance, smooth_tolerance) {
 				ta = Math.atan2(dya, dxa);
 				tb = Math.atan2(dyb, dxb);
 				
-				lsa = Math.lineSize([l[2], l[3]], [l[4], l[5]]);
-				lsb = Math.lineSize(c1, [l[4], l[5]]);
+				lsa = Math.pointDistance([l[2], l[3]], [l[4], l[5]]);
+				lsb = Math.pointDistance(c1, [l[4], l[5]]);
 				
 				ad = tb - ta;
 				if (ad < 0) ad += 2 * Math.PI;
