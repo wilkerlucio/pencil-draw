@@ -42,7 +42,7 @@
 					if (angle_between < 0) angle_between += 2 * Math.PI;
 					if (angle_between > Math.PI) angle_between -= 2 * Math.PI;
 					
-					show_angle(angle_between * 180 / Math.PI);
+					show_angle((angle_between * 180 / Math.PI) + "<br />" + angle + ' - ' + angle2);
 					
 					move_path.attr("path", path_base + rx + " " + ry);
 				};
