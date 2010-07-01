@@ -155,21 +155,7 @@ PathTools = {
 		return s;
 	},
 	
-	// get the result points of a simplification
-	simplifyPath: function(path, tolerance) {
-		var keys = PathTools.simplifyPathKeys(path, tolerance);
-		var s = [];
-
-		for (var i = 0; i < keys.length; i++) {
-			s.push(path[keys[i]]);
-		}
-
-		return s;
-	},
-	
-	// get a simplified results with smoothed corners
-	curvedSimplifiedPath: function(path, tolerance, smooth_tolerance) {
-		var keys = PathTools.simplifyPathKeys(path, tolerance);
+	smoothPath: function(path, keys, smooth_tolerance) {
 		var s = [];
 		smooth_tolerance = smooth_tolerance || 1.9;
 		s.push(path[0]);
@@ -233,5 +219,24 @@ PathTools = {
 		}
 
 		return s;
+	},
+	
+	// get the result points of a simplification
+	simplifyPath: function(path, tolerance) {
+		var keys = PathTools.simplifyPathKeys(path, tolerance);
+		var s = [];
+
+		for (var i = 0; i < keys.length; i++) {
+			s.push(path[keys[i]]);
+		}
+
+		return s;
+	},
+	
+	// get a simplified results with smoothed corners
+	curvedSimplifiedPath: function(path, tolerance, smooth_tolerance) {
+		var keys = PathTools.simplifyPathKeys(path, tolerance);
+		
+		return PathTools.smoothPath(path, keys, smooth_tolerance);
 	}
 };
