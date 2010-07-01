@@ -164,7 +164,7 @@ curvedSimplifiedPath = function(path, tolerance) {
 	var s = [];
 	s.push(path[0]);
 	
-	var c, p, d, pd, a, l, dx, dy, lab, lab2;
+	var c, p, d, pd, a, l, dxa, dya, dxb, dyb, lsa, lsb, ta, tb, ad, bm;
 
 	for (var i = 1; i < keys.length; i++) {
 		c = keys[i];
@@ -181,19 +181,45 @@ curvedSimplifiedPath = function(path, tolerance) {
 			c2 = path[Math.floor(d * 0.75) + p];
 			
 			if (i > 1) {
-				l = s[s.length - 1];
+				l = s.pop();
 				
-				dx = l[4] - l[2];
-				dy = l[5] - l[3];
+				console.log(l);
 				
-				lab = Math.sqrt(dx * dx + dy * dy);
-				lab2 = Math.lineSize(c1, [l[4], l[5]]);
+				dxa = l[2] - l[4];
+				dya = l[3] - l[5];
 				
-				dx = dx / lab;
-				dy = dy / lab;
+				dxb = c1[0] - l[4];
+				dyb = c1[1] - l[5];
 				
-				c1[0] = Math.round(l[4] + lab2 * dx);
-				c1[1] = Math.round(l[5] + lab2 * dy);
+				ta = Math.atan2(dya, dxa);
+				tb = Math.atan2(dyb, dxb);
+				
+				lsa = Math.lineSize([l[2], l[3]], [l[4], l[5]]);
+				lsb = Math.lineSize(c1, [l[4], l[5]]);
+				
+				ad = tb - ta;
+				if (ad < 0) ad += 2 * Math.PI;
+				if (ad > Math.PI) ad -= 2 * Math.PI;
+				
+				if (Math.abs(ad) > (Math.PI / 2)) {
+					bm = (Math.PI - Math.abs(ad)) / 2;
+					
+					if (ad < 0) {
+						l[2] = Math.round(l[4] + lsa * Math.cos(ta + bm));
+						l[3] = Math.round(l[5] + lsa * Math.sin(ta + bm));
+						c1[0] = Math.round(l[4] + lsb * Math.cos(tb - bm));
+						c1[1] = Math.round(l[5] + lsb * Math.sin(tb - bm));
+					} else {
+						l[2] = Math.round(l[4] + lsa * Math.cos(ta - bm));
+						l[3] = Math.round(l[5] + lsa * Math.sin(ta - bm));
+						c1[0] = Math.round(l[4] + lsb * Math.cos(tb + bm));
+						c1[1] = Math.round(l[5] + lsb * Math.sin(tb + bm));
+					}
+				}
+				
+				console.log(l);
+				
+				s.push(l);
 			}
 			
 			s.push([c1[0], c1[1], c2[0], c2[1], cp[0], cp[1]]);
