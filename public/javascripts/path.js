@@ -72,8 +72,10 @@ GeometryTools = {
 // Path Tools
 PathTools = {
 	// Implementation using iterative loops, better results
-	simplifyPathKeys: function(path, tolerance) {
+	simplifyPathKeys: function(path, tolerance, opt_small_paths) {
 		if (path.length < 3) return path.array_get_keys();
+		
+		opt_small_paths = opt_small_paths || false;
 
 		var t2 = tolerance * 3;
 		var s = [0];
@@ -88,7 +90,7 @@ PathTools = {
 
 				valid_line = true;
 
-				if (line_size <= t2) {
+				if (opt_small_paths && line_size <= t2) {
 					x = l + 1;
 				} else {
 					for (j = x - 1; j > l; j--) {
