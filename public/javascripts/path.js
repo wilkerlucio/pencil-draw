@@ -128,6 +128,40 @@ simplifyPathKeys = function(path, tolerance) {
 	return s;
 };
 
+simplifyPathKeys2 = function(path, tolerance, left_index, right_index) {
+	left_index = left_index || 0;
+	right_index = right_index || path.length - 1;
+
+	if((right_index - left_index) < 2) return path.array_get_keys().slice(left_index, right_index + 1);
+
+	var s = [left_index, right_index];
+	var line = [path[left_index][0], path[left_index][1], path[right_index][0], path[right_index][1]];
+	var p, i, d, dmax = 0, dmaxi;
+	var exceded = false;
+
+	for(i = left_index + 1; i < right_index; i++) {
+		p = path[i];
+		d = linePointDistance(line, p);
+
+		if (d > dmax) {
+			dmax = d;
+			dmaxi = i;
+		}
+	}
+
+	if (dmax > tolerance) {
+		var s1 = simplifyPathKeys2(path, tolerance, left_index, dmaxi);
+		var s2 = simplifyPathKeys2(path, tolerance, dmaxi, right_index);
+
+		s = s1;
+		s.concat_el(s2.slice(1));
+	}
+
+	console.log(s);
+
+	return s;
+};
+
 simplifyPath = function(path, tolerance) {
 	var keys = simplifyPathKeys(path, tolerance);
 	var s = [];
