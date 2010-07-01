@@ -71,41 +71,7 @@ isLineCollidingCircle = function(line, circle) {
 	return lec <= cr;
 };
 
-simplifyPathKeys = function(path, tolerance, left_index, right_index) {
-	left_index = left_index || 0;
-	right_index = right_index || path.length - 1;
-	
-	if((right_index - left_index) < 2) return path.array_get_keys().slice(left_index, right_index + 1);
-
-	var s = [left_index, right_index];
-	var line = [path[left_index][0], path[left_index][1], path[right_index][0], path[right_index][1]];
-	var c = [0, 0, tolerance], p, i;
-	var exceded = false;
-	
-	for(i = left_index + 1; i < right_index; i++) {
-		p = path[i];
-		c[0] = p[0], c[1] = p[1];
-	
-		if (!isLineCollidingCircle(line, c)) {
-			exceded = true;
-			break;
-		}
-	}
-
-	if (exceded) {
-		var m = Math.floor((right_index - left_index) * 0.5) + left_index;
-		
-		var s1 = simplifyPathKeys(path, tolerance, left_index, m);
-		var s2 = simplifyPathKeys(path, tolerance, m, right_index);
-	
-		s = s1;
-		s.concat_el(s2.slice(1));
-	}
-	
-	return s;
-};
-
-simplifyPathKeys2 = function(path, tolerance) {
+simplifyPathKeys = function(path, tolerance) {
 	if (path.length < 3) return path.array_get_keys();
 	
 	var s = [0];
@@ -160,7 +126,7 @@ simplifyPath = function(path, tolerance) {
 };
 
 curvedSimplifiedPath = function(path, tolerance, smooth_tolerance) {
-	var keys = simplifyPathKeys2(path, tolerance);
+	var keys = simplifyPathKeys(path, tolerance);
 	var s = [];
 	smooth_tolerance = smooth_tolerance || 1.9;
 	s.push(path[0]);
