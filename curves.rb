@@ -17,3 +17,7 @@ end
 get '/angles' do
   erb :angles
 end
+
+get '/explain' do
+  erb :line_simplification_explained
+end

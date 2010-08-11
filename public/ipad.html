@@ -1,0 +1,74 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru">
+	<head>
+		<title>Curves Calc</title>
+		<meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
+		<style type="text/css">
+			body {margin:0;}
+		</style>
+		<script type="text/javascript" src="/javascripts/raphael.js"></script>
+		<script type="text/javascript" src="/javascripts/path.js"></script>
+		<script type="text/javascript">
+			window.onload = function() {
+				var paper = Raphael("drawing-area", 600, 600);
+				var drawing = false;
+				var preview_string, preview_path;
+				paper.rect(0, 0, 600, 600).attr({fill: "#060"});
+				
+				document.body.onmousedown = function(e) {
+					drawing = true;
+					
+					e.preventDefault();
+					
+					preview_string = "M" + [e.clientX, e.clientY].join(" ");
+					preview_path = paper.path(preview_string).attr({"stroke-width": 1, "stroke": "black"});
+				};
+				
+				document.body.onmousemove = function(e) {
+					if (!drawing) return;
+					
+					preview_string += "L" + [e.clientX, e.clientY].join(" ");
+					preview_path.attr({path: preview_string});
+				};
+				
+				document.body.onmouseup = function(e) {
+					drawing = false;
+				};
+				
+				document.body.ontouchstart = function(e) {
+					if (e.touches.length == 1) {
+						drawing = true;
+						
+						var touch = e.touches[0];
+					
+						e.preventDefault();
+					
+						preview_string = "M" + [touch.pageX, touch.pageY].join(" ");
+						preview_path = paper.path(preview_string).attr({"stroke-width": 1, "stroke": "black"});
+					}
+				};
+				
+				document.body.ontouchmove = function(e) {
+					if (!drawing) return;
+					if (e.touches.length == 1) {
+						drawing = true;
+						
+						var touch = e.touches[0];
+						
+						preview_string += "L" + [touch.pageX, touch.pageY].join(" ");
+						preview_path.attr({path: preview_string});
+					}
+				};
+				
+				document.body.ontouchend = function(e) {
+					drawing = false;
+				};
+			};
+		</script>
+	</head>
+	<body>
+		<div id="drawing-area" style="float:left"></div>
+		<hr style="clear:both" />
+		<div style="padding: 10px">Draw on green area, the optimization details will appear on yellow area, and in red you can see the raw drawing details.</div>
+	</body>
+</html>
