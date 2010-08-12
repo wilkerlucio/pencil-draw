@@ -1,0 +1,38 @@
+<!DOCTYPE HTML>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<title>Canvas Performance on iPad</title>
+		<style type="text/css">
+			body {margin: 0;}
+			button {position: absolute;}
+		</style>
+		<script type="text/javascript" src="javascripts/jquery-1.4.2.min.js"></script>
+		<script type="text/javascript">
+			$(function() {
+				canvas = document.getElementById('drawing_area');
+				ctx = canvas.getContext("2d");
+				ctx.fillStyle = "#cccccc";
+				ctx.fillRect(0, 0, 10000, 10000);
+				
+				run = function(n) {
+					ctx.fillStyle = "#cccccc";
+					ctx.fillRect(0, 0, 10000, 10000);
+					
+					ctx.fillStyle = "#000000";
+					for (var i = 0; i < n; i++) {
+						ctx.fillRect(Math.random() * 1024, Math.random() * 768, 1, 1);
+					}
+				};
+			});
+			
+		</script>
+	</head>
+	<body>
+		<button onclick="run(1000)">draw 1000 dots</button>
+		<button onclick="run(10000)" style="left: 200px">draw 10000 dots</button>
+		<button onclick="run(100000)" style="left: 400px">draw 100000 dots</button>
+		<button onclick="run(1000000)" style="left: 600px">draw 1000000 dots</button>
+		<canvas id="drawing_area" width="1024" height="768"></canvas>
+	</body>
+</html>
